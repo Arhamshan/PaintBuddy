@@ -156,6 +156,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+       // UxWeb\SweetAlert\SweetAlertServiceProvider::class,
 
     ],
 
@@ -205,6 +206,10 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Calendar' => MaddHatter\LaravelFullcalendar\Facades\Calendar::class,
+        // 'Alert' => UxWeb\SweetAlert\SweetAlert::class,
+
+
+
     ],
 
 ];

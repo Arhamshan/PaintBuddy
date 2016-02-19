@@ -15,10 +15,15 @@ class mPageController extends Controller
     public function viewImages()
     {
         $imDets = Items::all();
-        return view('pages/home')->with('imDets',$imDets);
+        return view('pages/home1')->with('imDets',$imDets);
 //        return $imDets;
 //        //return 'hello';
 //        $imDets = 'hello';
 //        return view('pages/home')->with('imDets',$imDets);
     }
+
+    
+
+
+
 }

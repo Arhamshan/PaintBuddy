@@ -26,7 +26,13 @@
 |
 */
 
+
 Route::group(['middleware' => ['web']], function () {
+	
+Route::get('/discount','Discount\discountController@discount');
+
+
+	
     //
 });
 
@@ -43,3 +49,33 @@ Route::get('/chOrdeStat/{ordID}','Artist\ArtsController@UpdOrderStat');
 Route::get('/ArtMainCal','Artist\ArtsController@ViewCal');//Calendar path
 
 
+
+
+
+Route::get('/displaydiscount','Discount\discountController@displaydiscount');
+Route::get('/assigndiscount', 'Discount\discountController@assigndiscount');
+
+Route::get('/viewpromotion','Discount\discountController@viewpromotion');
+
+Route::get('/enterpromotion', 'Discount\discountController@enterpromotion');
+
+
+Route::get('/registerpromotion', 'Discount\discountController@registerpromotion');
+
+Route::get('/login', 'discountController@rlogin');
+
+
+
+Route::put('/addDiscount', 'Discount\discountController@addDiscount');
+Route::post('/viewDiscount', 'Discount\discountController@viewDiscount');
+
+Route::post('/enterpromotion', 'Discount\discountController@enterpromotion');
+
+Route::post('/regpromotion', 'Discount\discountController@regpromotion');
+
+
+Route::group(['middleware' => 'web'], function () {
+    Route::auth();
+
+    Route::get('/home1', 'HomeController@index');
+});
