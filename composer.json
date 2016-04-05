@@ -8,7 +8,13 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "laravelcollective/html": "~5.0",
-        "maddhatter/laravel-fullcalendar": "^1.2"
+        "maddhatter/laravel-fullcalendar": "^1.2",
+        "kryptonit3/counter": "5.2.*",
+        "moontoast/math": "^1.1",
+        "doctrine/dbal": "^2.5",
+        "reportico/laravel-reportico": "~5.1",
+        "filp/whoops": "~1.0",
+        "barryvdh/laravel-dompdf": "*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

@@ -45,6 +45,49 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
+        if ($this->isHttpException($e)) {
+            return $this->renderHttpExceptionView($e);
+        }
+
+        if (config('app.debug')) {
+            return $this->renderExceptionWithWhoops($e);
+        }
+
         return parent::render($request, $e);
+    }
+
+
+    /**
+     * Render an exception using Whoops.
+     *
+     * @param  \Exception $e
+     * @return \Illuminate\Http\Response
+     */
+    protected function renderExceptionWithWhoops(Exception $e)
+    {
+        $whoops = new \Whoops\Run;
+        $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
+
+        return new \Illuminate\Http\Response(
+            $whoops->handleException($e),
+            $e->getStatusCode(),
+            $e->getHeaders()
+        );
+    }
+
+    /**
+     * Render the error view that best fits that status code.
+     *
+     * @param Exception $e
+     * @return \Illuminate\Http\Response
+     */
+    public function renderHttpExceptionView(Exception $e)
+    {
+        $package = 'cms'; //@todo - allow for custom CMS packages and themes
+        $status = $e->getStatusCode();
+        if (!view()->exists($package."::errors.".$status)) {
+            $status = 'default';
+        }
+        return response()->view($package."::errors.".$status, ['exception' => $e], $status);
     }
 }

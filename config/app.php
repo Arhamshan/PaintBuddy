@@ -149,6 +149,10 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         MaddHatter\LaravelFullcalendar\ServiceProvider::class,
+        Kryptonit3\Counter\CounterServiceProvider::class,
+        Reportico\Reportico\ReporticoServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -156,7 +160,6 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-       // UxWeb\SweetAlert\SweetAlertServiceProvider::class,
 
     ],
 
@@ -206,10 +209,8 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Calendar' => MaddHatter\LaravelFullcalendar\Facades\Calendar::class,
-        // 'Alert' => UxWeb\SweetAlert\SweetAlert::class,
-
-
-
+        'Counter' => Kryptonit3\Counter\Facades\CounterFacade::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ],
 
 ];
