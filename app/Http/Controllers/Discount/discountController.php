@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Discount;
 
 use DB;
 //use Illuminate\Http\Request;
-use auth; 
+//use auth; 
 use App;
 use App\User;
 use Illuminate\Foundation\Validattion\ValidateRequests;
@@ -23,6 +23,10 @@ use Storage;
 use File;
 use Illuminate\Support\Facades\Request;
 use App\Discount;
+use Illuminate\Support\Facades\Auth;
+
+//use Illuminate\Support\Facades\Output;
+
 
 class discountController extends Controller{
 	/**
@@ -52,7 +56,7 @@ class discountController extends Controller{
 		$id = 1;
 		$values ='1';
 		$oldDiscount = DB::table('discount')->where('edate', '<', $tday1)->delete();
-		return view('pages/Discount/discountpage29', ['item' => $item, 'td' =>$add,
+		return view('pages/Discount/discountpage', ['item' => $item, 'td' =>$add,
 		'id' => $id,'oldDiscount' =>$oldDiscount, 'values'=> $values]);
 	}
 
@@ -88,10 +92,10 @@ class discountController extends Controller{
 			'start_date' => 'required|date|after:yesterday',
 			'end_date' => 'required|date|after:start_date' ));
 		if ($validate->fails()) {
-			return view('pages\Discount\discountpage29',
+			return view('pages\Discount\discountpage',
 				['table2' => $table1, 'item' => $item,
 				'td'=> $add, 'id'=>$id,'oldDiscount' =>$oldDiscount,
-				'values'=> $values])->withErrors($validate)->withInput(Input::get());
+				'values'=> $values])->withErrors($validate)->withInput(Input::get('Percentage'));
 		}
 		else {
 			$itemcategory= Input::get('itmcat');
@@ -99,11 +103,13 @@ class discountController extends Controller{
 			$Percentage= Input::get('Percentage');
 			$sdate= Input::get('start_date');
 			$edate= Input::get('end_date');
-			$imag = DB::table('items')->where('itName', '=', $itemcategory)->value('imPath');
+			$imag = DB::table('items')->where('itName', '=', $itemcategory)->value('imName');
 			$itid = DB::table('items')->where('itName', '=', $itemcategory)->value('itID');
 			$price = DB::table('items')->where('itName', '=', $itemcategory)->value('price');
 			$disc = ($Percentage/100.0)*$price;
-			$iprice= $price-$disc;
+			$iprice2= $price-$disc;
+			$iprice = round($iprice2, 2); //round_to_2dp($iprice2);
+
 			$itemid = DB::table('discount')->select('itid')->get();
 			//$dtype = DB::table('discount')->select('dtype')->get();
 			
@@ -113,7 +119,7 @@ class discountController extends Controller{
 					if ($dtype==$discountype) {
 						$id = 0;
 
-						return view('pages\Discount\discountpage29',
+						return view('pages\Discount\discountpage',
 							['table2' => $table1, 'item' => $item, 'td'=> $add,
 							'id' => $id,'oldDiscount' =>$oldDiscount,
 							'values'=> $values])->withErrors($validate);
@@ -132,7 +138,7 @@ class discountController extends Controller{
 				'sdate'=>$sdate,
 				'edate'=>$edate, 
 				'itid' => $itid));
-			return view('pages\Discount\discountpage29',
+			return view('pages\Discount\discountpage',
 				['table2' => $table1, 'item' => $item, 'td'=> $add, 'id' => $id,
 				'oldDiscount' =>$oldDiscount, 'values'=> $values])->withErrors($validate);
 		}
@@ -154,7 +160,7 @@ class discountController extends Controller{
 		$oldDiscount = 0;
 		$values = DB::table('discount')->select('did')->first();
 		$validate = validator::make(input::all(), array());
-        return view('pages\Discount\discountpage29',
+        return view('pages\Discount\discountpage',
 			['table2' => $table1, 'item' => $item, 'oldDiscount' =>$oldDiscount,'td' => $add,
 			'id' => $id, 'values'=> $values])->withErrors($validate);
 	}
@@ -166,16 +172,30 @@ class discountController extends Controller{
 	 *	created : 14/02/2016
      */
 	public function displaydiscount(){
-		$tday1 = date('Y-m-d');	
-		DB::table('discount')->where('edate', '<', $tday1)->delete();
-		$end = DB::table('discount')->select('edate')->first();
-		$tday = date('Y-m-d');
-		$diplaydisc = DB::table('items')
-			->join('discount', 'discount.itid', '=', 'items.itID')
-			->select('items.price', 'discount.iprice', 'discount.imgpath',
-				'discount.ipersentage', 'discount.edate', 'discount.dtype')->get();
-		return View('pages/Discount/displaydiscount15', ['diplaydisc' => $diplaydisc]);
+		$ttt='Arhamkhan';
+		if (Auth::check()){
+			$tday1 = date('Y-m-d');	
+			DB::table('discount')->where('edate', '<', $tday1)->delete();
+			$end = DB::table('discount')->select('edate')->first();
+			$tday = date('Y-m-d');
+			$diplaydisc = DB::table('items')
+				->join('discount', 'discount.itid', '=', 'items.itID')
+				->select('items.price', 'discount.iprice', 'discount.imgpath',
+					'discount.ipersentage', 'discount.edate', 'discount.dtype')->get();
+			return View('pages/Discount/displaydiscount15', ['diplaydisc' => $diplaydisc]);
+			//dd($ttt);
+
+		}
+
+		else{
+			//return view('pages/User/login/login', ['errors' => $validator
+			return redirect('home')->with('msg','You are not login');
+
+
+		
 	}
+	}
+
 	/**
 	 *	@author: Arham
 	 *	@return $this
@@ -200,7 +220,7 @@ class discountController extends Controller{
 			# code...
 		}*/
 		
-		return View('pages/Discount/assignPromotion20',['pr' =>$pr, 'oldpromotion'=>$oldpromotion])->withErrors($validate);
+		return View('pages/Discount/assignPromotion22',['pr' =>$pr, 'oldpromotion'=>$oldpromotion])->withErrors($validate);
 	}
 	/**
 	 *	@author: Arham
@@ -216,13 +236,14 @@ class discountController extends Controller{
 		$pr=0;
 		$oldpromotion=0;
 		$validate = validator::make(input::all(), array(
-			'image' => 'mimes:jpeg,jpg,png',
+			'image' => 'mimes:png',  //jpeg,jpg,
 			'title' => 'required|min:5',
 			'body' => 'required|min:10',  
+			'Percentage'=>'required|numeric|min:5|max:50',
 			'start_date' => 'required|date|after:yesterday',
 			'end_date' => 'required|date|after:start_date' ));
 		if ($validate->fails()) {
-			return view('pages\Discount\assignPromotion20', ['pr' => $pr])
+			return view('pages\Discount\assignPromotion22', ['pr' => $pr, 'oldpromotion'=>$oldpromotion])
 				->withErrors($validate);
 		}
 		/*elseif ($titl1) {
@@ -233,6 +254,7 @@ class discountController extends Controller{
 		else {
 			$title = Input::get('title');
 			$body = Input::get('body');
+			$perc= Input::get('Percentage');
 			$sdate= Input::get('start_date');
 			$edate= Input::get('end_date');
 			if((Request::file('image'))){
@@ -241,18 +263,15 @@ class discountController extends Controller{
 			$fileName = rand(1,1).'.'.$extension;//.Carbon::now()->format('Y-m-d');	//set a file name for image
 			Request::file('image')->move($destinationPath, $fileName); // uploading file to given path
 			}
-			DB::table('addpromotion')->insert(array('title'=>$title, 'body'=>$body, 
-				'sdate'=>$sdate, 'edate'=>$edate));
-			$pr=1;
-
-
+			$pr=DB::table('addpromotion')->insert(array('title'=>$title, 'body'=>$body,
+			 	'ppercentage'=>$perc, 'sdate'=>$sdate, 'edate'=>$edate));
 /*			$data = ['heading' => 'Welcome to PaintBuddy!!'];
 			Mail::send('pages/discount/promotionmail', $data, function($message){
 				$message->to(Input::get('email'))
 				->subject('Paint Buddy Promotion');
 			});
 */
-			return View('pages/Discount/assignPromotion20', ['pr' => $pr, 'oldpromotion'=>$oldpromotion])->withErrors($validate);
+			return View('pages/Discount/assignPromotion22', ['pr' => $pr, 'oldpromotion'=>$oldpromotion])->withErrors($validate);
 		}
 	}
 	/**
@@ -266,9 +285,28 @@ class discountController extends Controller{
 		/*$titl = DB::table('addpromotion')->select('title')->first();
 		$boddy = DB::table('addpromotion')->select('body')->first();
 		$sdat =  DB::table('addpromotion')->select('sdate')->first();
-		$edat =  DB::table('addpromotion')->select('edate')->first()*/;
-		$promotiontable =  DB::table('addpromotion')->get();
-		return View('pages/Discount/viewPromotion11', ['promotiontable' => $promotiontable]);
+		$edat =  DB::table('addpromotion')->select('edate')->first()*/
+		//dd($nm,$lnm, $ad, $mail, $phone);
+		//'name'.settext($nm);
+		//Output::set('name')->$nm;
+		$promotioncount=1;
+		if (Auth::check()){
+			$promotiontable =  DB::table('addpromotion')->get();
+			if ($promotiontable= null) {
+
+				return View('pages/Discount/viewPromotion', ['promotiontable' => $promotiontable, 'promotioncount'=>$promotioncount]);
+
+				# code...
+			}
+			else{
+				$promotioncount=0;
+				return View('pages/Discount/viewPromotion', ['promotiontable' => $promotiontable, 'promotioncount'=>$promotioncount]);
+		}	}
+		else{
+			return redirect('home')->with('msg','You are not login');
+		}
+
+
 	}
 	/**
 	 *	@author: Arham
@@ -280,7 +318,24 @@ class discountController extends Controller{
 	public function enterpromotion(){
 		$validate2 = validator::make(input::all(), array());
 		$rp = 0;
-		return view('pages\Discount\registerpromotion22', ['rp'=>$rp])
+		$rid=0;
+		if (Auth::check()){
+		$nm =Auth::user()->name;
+		$lnm =Auth::user()->lname;
+		$ad = Auth::user()->address;
+		$mail = Auth::user()->email;
+		$phone = Auth::user()->PhoneNo;
+			
+		}
+		else{
+			$nm = null;
+			$lnm = null;
+			$ad = null;
+			$mail = null;
+			$phone = null;
+		}
+
+		return view('pages\Discount\registerpromotion27', ['rp'=>$rp, 'nm'=>$nm, 'lnm'=>$lnm,'ad'=>$ad, 'mail'=>$mail,'phone'=>$phone,'rid'=>$rid])
 			->withErrors($validate2);
 	}
 	/**
@@ -292,6 +347,12 @@ class discountController extends Controller{
 	 *	created : 2/03/2016
 	 */
 	public function regpromotion(Request $request){
+		$nm = null;
+		$lnm = null;
+		$ad = null;
+		$mail = null;
+		$phone = null;
+		$rid=0;
 		$validate2 = validator::make(input::all(),array(
 			'first_name' => 'required|alpha',
 			'last_name' => 'required|alpha|different:first_name',
@@ -300,13 +361,22 @@ class discountController extends Controller{
 			'address' => 'required' ));
 		$rp = 0;
 		if ($validate2->fails()) {
-			return view('pages\Discount\registerpromotion22', ['rp'=>$rp])->withErrors($validate2);
+			return view('pages\Discount\registerpromotion27', ['rp'=>$rp, 'nm'=>$nm, 'lnm'=>$lnm,'ad'=>$ad, 'mail'=>$mail,'phone'=>$phone, 'rid'=>$rid])->withErrors($validate2);
 		}
 		$fname= Input::get('first_name');
 		$lname= Input::get('last_name');
 		$email= Input::get('email');
 		$cno= Input::get('contact_number');
 		$address= Input::get('address');
+		$cid1 =Auth::user()->id;
+		$id = DB::table('regpromotion')->select('cid')->get();
+		foreach($id as $id1) {
+			if($cid1 == $id1->cid) {
+				$rid=1;
+				return view('pages\Discount\registerpromotion27', ['rp'=>$rp, 'nm'=>$nm, 'lnm'=>$lnm,'ad'=>$ad, 'mail'=>$mail,'phone'=>$phone, 'rid'=>$rid])
+				->withErrors($validate2);
+			}
+		}
 
 
         function generateRandomString($length = 10) {
@@ -320,12 +390,13 @@ class discountController extends Controller{
 		}
 		$prokey = generateRandomString();
 		Mail::send('pages/discount/promotionmail1', array("prokey" => $prokey, 'fname'=> $fname, 'lname'=>$lname), function($message){
+			$message->from('paintbuddyProj@gmail.com');
 			$message->to(Input::get('email'))
 			->subject('Paint Buddy Promotion');
 		});
 		$rp = DB::table('regpromotion')->insert(array('fname'=>$fname, 'lname'=>$lname,
-			'email'=>$email, 'contact_number'=>$cno, 'address'=>$address, 'promotionID'=> $prokey ));
-		return view('pages\Discount\registerpromotion22', ['rp'=>$rp])
+			'email'=>$email, 'contact_number'=>$cno, 'address'=>$address, 'promotionID'=> $prokey,'cid'=>$cid1 ));
+		return view('pages\Discount\registerpromotion27', ['rp'=>$rp, 'nm'=>$nm, 'lnm'=>$lnm,'ad'=>$ad, 'mail'=>$mail,'phone'=>$phone, 'rid'=>$rid])
 			->withErrors($validate2);
 	}
 
@@ -372,6 +443,8 @@ class discountController extends Controller{
 	
 		$data = ['heading' => 'Welcome to PaintBuddy!!'];
 		Mail::send('pages/discount/promotionpdf9', array("table" => $table), function($message){
+			
+			$message->from('paintbuddyProj@gmail.com');
 			$message->to('arhamshan625@gmail.com')
 			->subject('Paint Buddy Promotion');
 		});

@@ -42,7 +42,7 @@
                                 </script>
                             @endif
                                 <label for="InputItem">
-                                     Item Category qwert
+                                     Items
                                 </label>
                                 <div>
                                     <br/>

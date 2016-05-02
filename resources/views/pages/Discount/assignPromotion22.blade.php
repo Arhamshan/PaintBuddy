@@ -86,6 +86,13 @@
                                         <P style="color:red">{{$errors->first('body')}} </P>
                                     </div>
                                 </div>
+                                <div class="form-group" class="col-xs-3">
+                                    <label for="InputPercentage">
+                                        Promotion Percentage
+                                    </label>
+                                    <input type="text" name="Percentage" class="form-control" placeholder="%" id="InputPrice"/> <!-- required pattern="\d{1,2}"/> -->
+                                       <P style="color:red">{{$errors->first('Percentage')}} </P>
+                                </div>
                                 <div >
                                     <label for="startDate"> 
                                         Start Date

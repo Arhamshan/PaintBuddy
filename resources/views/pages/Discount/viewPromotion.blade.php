@@ -7,12 +7,20 @@
             <div class="col-md-12">
             <div class="panel panel-default, col-md-12 col-md-offset-0 ">
                 <form role="form" action="/enterpromotion"  method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                     <div class="form-group " class="col-md-6">
                         <img src="images\promotion\1.png" style="height: 250px;width: 600px; margin-left:280px" class="img-rounded"/>
-                        <p style="text-align:center; font-size:25px; color:#00b3b3"><b><u> WelCome to the Promotion...!!! error.....You can register only one promotion at a time.</u></b></p>
+                        <p style="text-align:center; font-size:25px; color:#00b3b3"><b><u> WelCome to the Promotion...!!! You can register only one promotion at a time.</u></b></p>
                         
                         <div class="row">
-                        
+                        @if($promotioncount = 1) 
+                            <link rel="stylesheet" type="text/css" href="assets/sweetalert/dist/sweetalert.css">
+                            <script src="assets/sweetalert/dist/sweetalert.min.js"></script>
+                            <script>
+                                sweetAlert("Notice..!!!", "No promotions available.");
+                            </script>
+                        @endif
+                       
                         @foreach($promotiontable as $promotiontable1)
                         <div class="col-sm-6"> 
                         <div class="panel panel-default"> 

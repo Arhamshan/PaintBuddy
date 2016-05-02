@@ -256,7 +256,7 @@ class RegisterController extends Controller
      */
     public function postLogin(){
 
-        $validator = Validator::make(
+         $validator = Validator::make(
             [
                 'UserName' => Input::get('UserName'),
                 'PassWord' => Input::get('PassWord'),
@@ -278,8 +278,8 @@ class RegisterController extends Controller
 
             if (Auth::attempt(array('email' => $email, 'password' => $password,'status'=>1))) {
 
-                if(Auth::user()->role=='customer')return redirect('myaccount');
-                if(Auth::user()->role=='admin')return view('pages.User');   //Check this
+                if(Auth::user()->role=='customer')return redirect('/');
+                if(Auth::user()->role=='admin')return redirect('admin');   //Check this
             }
             elseif (Auth::attempt(array('email' => $email, 'password' => $password,'status'=>0))) {
 
@@ -288,7 +288,8 @@ class RegisterController extends Controller
 
             } else {
 
-                return view('pages/User/login/login', ['status' => 'Password you have entered is incorrect!']);
+               // return view('pages/User/login/login', ['status' => 'Password you have entered is incorrect!']);
+                return redirect()->back()->with('status' , 'Password you have entered is incorrect!');
             }
         }
     }
